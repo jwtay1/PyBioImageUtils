@@ -100,6 +100,18 @@ def test_composite_inputs_aIsRGB(image_cells_rgb, image_nuclei_gray):
     
     assert True
 
+def test_composite_invalid_shapes():
+    with pytest.raises(ValueError):
+        overlay_image = visualize.composite(np.ones((11, 10)), np.ones((21, 10)))
+
+def test_composite_invalid_color_too_high():
+    with pytest.raises(ValueError):
+        overlay_image = visualize.composite(np.ones((10,10)), np.ones((10, 10)), color_A=[2.0, 1, 1])
+
+def test_composite_invalid_color_too_low():
+    with pytest.raises(ValueError):
+        overlay_image = visualize.composite(np.ones((10,10)), np.ones((10, 10)), color_B=[-256, 1, 1])
+
 def test_mask_overlay(image_cells_rgb, mask_single):
 
     overlay_image = visualize.overlay_mask(image_cells_rgb, mask_single, plot_outlines=True)

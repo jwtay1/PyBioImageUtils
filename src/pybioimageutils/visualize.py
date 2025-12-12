@@ -1,10 +1,31 @@
+"""
+This module provides visualization utilities, such as compositing images and masks.
+"""
 import skimage
 import numpy as np
 
 def composite(image_A, image_B, color_A=[1, 1, 1], color_B=[0, 0, 1], normalize_images=True, alpha=0.5):
+    """
+    Generates a composite RGB image by alpha blending.
+    
+    :param image_A: The first image
+    :param image_B: The second image
+    :param color_A: The desired color of image_A, specified as normalized (i.e., 0 to 1) RGB values.
+    :param color_B: The desired color of image_B, specified as normalized (i.e., 0 to 1) RGB values.
+    :param normalize_images: Whether images should be normalized prior to compositing. Defaults to True.
+    :param alpha: Specifies alpha blending level, between 0 - 1. The higher the value, the more image_B appears over image_A.
+    """
 
-    #Todo: Run checks that image dimensions are correct
     #If image_A is RGB, ignore the color aspect
+    if image_A.shape[:1] != image_B.shape[:1]:
+        raise ValueError("Image shapes (height and width) are not the same.")
+    
+    if np.max(color_A) > 1 or np.min(color_A) < 0:
+        raise ValueError("Expected values of color_A to be between 0 and 1.")
+    
+    if np.max(color_B) > 1 or np.min(color_B) < 0:
+        raise ValueError("Expected values of color_B to be between 0 and 1.")
+    
 
     if normalize_images:
         image_A = normalize(image_A)
