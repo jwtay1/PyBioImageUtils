@@ -25,13 +25,12 @@ def composite(image_A, image_B, color_A=[1, 1, 1], color_B=[0, 0, 1], normalize_
     
     if np.max(color_B) > 1 or np.min(color_B) < 0:
         raise ValueError("Expected values of color_B to be between 0 and 1.")
-    
-
+  
     if normalize_images:
         image_A = normalize(image_A)
         image_B = normalize(image_B)
 
-    image_composite = np.zeros((image_A.shape[0], image_A.shape[1], 3))
+    image_composite = np.zeros((image_A.shape[0], image_A.shape[1], 3), dtype=image_A.dtype)
 
     for c in range(3):
 
@@ -39,6 +38,9 @@ def composite(image_A, image_B, color_A=[1, 1, 1], color_B=[0, 0, 1], normalize_
             image_left = image_A
             color_left = color_A[c]
         elif np.ndim(image_A) == 3:
+            # print("Image A is RGB")
+            # print(f"Image A max: {np.max(image_A)}")
+            # print(f"Image A min: {np.min(image_A)}")
             image_left = image_A[:, :, c]
             color_left = 1
 
@@ -46,14 +48,23 @@ def composite(image_A, image_B, color_A=[1, 1, 1], color_B=[0, 0, 1], normalize_
             image_right = image_B
             color_right = color_B[c]
         elif np.ndim(image_B) == 3:
+            #print("Image B is RGB")
+            # print(f"Image B max: {np.max(image_B)}")
+            # print(f"Image B min: {np.min(image_B)}")
             image_right = image_B[:, :, c]
             color_right = 1
 
         image_composite[:, :, c] = (alpha * image_left * color_left) + ((1 - alpha) * image_right * color_right)
 
+        # print(f"Image composite max: {np.max(image_composite[:, :, c])}")
+        # print(f"Image composite min: {np.min(image_composite[:, :, c])}")
+
     return image_composite
 
 def normalize(image, by_layer=True):
+
+    # Have to convert images to float before normalizing
+    image = image.astype(np.float64)
 
     #Assume all images are [h, w, color, maybe z-stack]
     if np.ndim(image) < 2:
